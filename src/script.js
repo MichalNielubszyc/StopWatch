@@ -2,18 +2,22 @@
 
 const startBtn = document.querySelector('.startBtn');
 const stopBtn = document.querySelector('.stopBtn');
-const startStopBtn = document.querySelector('.startStopBtn');
 const pauseBtn = document.querySelector('.pauseBtn');
 const display = document.querySelector('.display');
 
-// Start & Stop functions
+// Start function
 
 let startTime;
 let elapsedTime = 0;
 let stopWatchInterval;
 
 function start(){
-    startTime = Date.now() - elapsedTime;
+    if (isStopBtnClicked){
+        startTime = Date.now();
+        isStopBtnClicked = false;
+    } else {
+        startTime = Date.now() - elapsedTime;
+    }
     stopWatchInterval = setInterval(printTime, 10);
     changeStartStopBtn();
     pauseBtn.classList.remove('clicked')
@@ -30,6 +34,8 @@ function printTime(){
     }
 }
 
+// Pause function
+
 function pause(){
     if (!pauseBtn.classList.contains('clicked')){
         clearInterval(stopWatchInterval);
@@ -42,6 +48,20 @@ function pause(){
 }
 pauseBtn.addEventListener('click', pause)
 
+// Stop function
+
+let isStopBtnClicked = false;
+
+function stop(){
+    clearInterval(stopWatchInterval);
+    changeStartStopBtn();
+    isStopBtnClicked = true;
+}
+stopBtn.addEventListener('click', stop)
+
+
+// Formatters and other
+
 function formatTime(){
     elapsedTime = elapsedTime.toFixed(0);
     elapsedTimeSeconds = Math.floor(elapsedTime/1000) // in s
@@ -49,13 +69,11 @@ function formatTime(){
 }
 
 function changeStartStopBtn(){
-    if (startStopBtn.classList.contains('startBtn')){
-        startStopBtn.classList.add('stopBtn');
-        startStopBtn.classList.remove('startBtn');
-        startStopBtn.innerHTML = 'Stop';
-    }else if(startStopBtn.classList.contains('stopBtn')){
-        startStopBtn.classList.add('startBtn');
-        startStopBtn.classList.remove('stopBtn');
-        startStopBtn.innerHTML = 'Start';
-    }  
+    if (startBtn.classList.contains('button--hidden')){
+        startBtn.classList.remove('button--hidden')
+        stopBtn.classList.add('button--hidden')
+    } else {
+        startBtn.classList.add('button--hidden')
+        stopBtn.classList.remove('button--hidden')
+    }
 }
