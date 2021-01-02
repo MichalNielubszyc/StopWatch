@@ -187,7 +187,7 @@ function save(){
 
 saveBtn.addEventListener('click', save)
 
-// Save in Local Storage
+//XXXXXXXXXXXXXXXXXXXXXXX Save in Local Storage
 
 // function renderScores(){
 //     const lastScoresTitle = document.createElement('h2')
