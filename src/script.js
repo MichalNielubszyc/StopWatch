@@ -2,8 +2,10 @@
 
 const startBtn = document.querySelector('.startBtn');
 const stopBtn = document.querySelector('.stopBtn');
+const nextBtn = document.querySelector('.nextBtn');
 const pauseBtn = document.querySelector('.pauseBtn');
 const resetBtn = document.querySelector('.resetBtn');
+const saveBtn = document.querySelector('.saveBtn');
 const display = document.querySelector('.display');
 
 // Start function
@@ -16,12 +18,13 @@ function start(){
     if (isStopBtnClicked){
         startTime = Date.now();
         isStopBtnClicked = false;
-    } else {
+    } else if (!isStopBtnClicked) {
         startTime = Date.now() - elapsedTime;
     }
     stopWatchInterval = setInterval(printTime, 10);
     changeStartStopBtn();
-    pauseBtn.classList.remove('clicked')
+    pauseBtn.classList.remove('clicked');
+    saveBtn.classList.add('button--hidden');
 }
 startBtn.addEventListener('click', start)
 
@@ -57,6 +60,7 @@ function stop(){
     clearInterval(stopWatchInterval);
     changeStartStopBtn();
     isStopBtnClicked = true;
+    saveBtn.classList.remove('button--hidden');
 }
 stopBtn.addEventListener('click', stop)
 
@@ -72,6 +76,50 @@ function reset(){
 }
 
 resetBtn.addEventListener('click', reset)
+
+// Next function
+
+console.log(elapsedTime)
+
+// let startTime;
+// let elapsedTime = 0;
+// let stopWatchInterval;
+
+// function start(){
+//     if (isStopBtnClicked){
+//         startTime = Date.now();
+//         isStopBtnClicked = false;
+//     } else {
+//         startTime = Date.now() - elapsedTime;
+//     }
+//     stopWatchInterval = setInterval(printTime, 10);
+//     changeStartStopBtn();
+//     pauseBtn.classList.remove('clicked');
+//     saveBtn.classList.add('button--hidden');
+// }
+// startBtn.addEventListener('click', start)
+
+// function printTime(){
+//     elapsedTime = Date.now() - startTime; // in ms
+//     formatTime();
+//     if(elapsedTimeRemainder<10){
+//         display.innerHTML = `${elapsedTimeSeconds}:0${elapsedTimeRemainder}`
+//     }else{
+//         display.innerHTML = `${elapsedTimeSeconds}:${elapsedTimeRemainder}`
+//     }
+// }
+
+// function pause(){
+//     if (!pauseBtn.classList.contains('clicked')){
+//         clearInterval(stopWatchInterval);
+//         changeStartStopBtn();
+//         pauseBtn.classList.add('clicked')
+//     } else {
+//         start();
+//     }
+    
+// }
+// pauseBtn.addEventListener('click', pause)
 
 // Formatters and other
 
