@@ -1,3 +1,7 @@
 .button--hidden{
     display: none;
 }
+
+.small-margins{
+    margin: 10px 0;
+}

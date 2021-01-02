@@ -32,9 +32,9 @@ function printTime(){
     elapsedTime = Date.now() - startTime; // in ms
     formatTime();
     if(elapsedTimeRemainder<10){
-        display.innerHTML = `${elapsedTimeSeconds}:0${elapsedTimeRemainder}`
+        display.innerHTML = `${elapsedTimeSeconds}:0${elapsedTimeRemainder}`;
     }else{
-        display.innerHTML = `${elapsedTimeSeconds}:${elapsedTimeRemainder}`
+        display.innerHTML = `${elapsedTimeSeconds}:${elapsedTimeRemainder}`;
     }
 }
 
@@ -79,7 +79,31 @@ resetBtn.addEventListener('click', reset)
 
 // Next function
 
-console.log(elapsedTime)
+const displayContainer = document.querySelector('.display-container');
+
+function nextStart(){
+    console.log(elapsedTime)
+    printLastTime()
+    saveBtn.classList.remove('button--hidden');
+}
+
+function printLastTime(){
+    elapsedTime = Date.now() - startTime; // in ms
+    formatTime();
+    let elapsedLastTimeSeconds = elapsedTimeSeconds;
+    let elapsedLastTimeRemainder = elapsedTimeRemainder;
+    const displayLast = document.createElement('h2');
+    displayLast.className = 'text-xl mt-8 font-bold font-sans text-indigo-600 small-margins'
+    if(elapsedLastTimeRemainder<10){
+        displayLast.innerHTML = `${elapsedLastTimeSeconds}:0${elapsedLastTimeRemainder}`;
+    }else{
+        displayLast.innerHTML = `${elapsedLastTimeSeconds}:${elapsedLastTimeRemainder}`;
+    }
+    displayContainer.appendChild(displayLast)
+}
+
+nextBtn.addEventListener('click', nextStart)
+
 
 // let startTime;
 // let elapsedTime = 0;
