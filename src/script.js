@@ -3,6 +3,7 @@
 const startBtn = document.querySelector('.startBtn');
 const stopBtn = document.querySelector('.stopBtn');
 const pauseBtn = document.querySelector('.pauseBtn');
+const resetBtn = document.querySelector('.resetBtn');
 const display = document.querySelector('.display');
 
 // Start function
@@ -59,6 +60,18 @@ function stop(){
 }
 stopBtn.addEventListener('click', stop)
 
+// Reset function
+
+function reset(){
+    display.innerHTML = `0:00`
+    elapsedTime = 0;
+    clearInterval(stopWatchInterval);
+    if (startBtn.classList.contains('button--hidden')){
+        changeStartStopBtn();
+    }
+}
+
+resetBtn.addEventListener('click', reset)
 
 // Formatters and other
 
