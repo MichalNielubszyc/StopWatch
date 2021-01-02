@@ -11,6 +11,15 @@ const resetBtn = document.querySelector('.resetBtn');
 const saveBtn = document.querySelector('.saveBtn');
 const display = document.querySelector('.display');
 
+// Rendering last scores
+
+const scoresContainer = document.querySelector('.scores-section')
+const scoreListNameFromLS = localStorage.getItem('scoreListNameFromLS');
+const scoreListFromLSString = localStorage.getItem('scoreListFromLS');
+const scoreListFromLS = scoreListFromLSString.split(",")
+
+renderScores()
+
 // Start function
 
 let startTime;
@@ -66,6 +75,7 @@ function stop(){
     saveBtn.classList.remove('button--hidden');
     if (isNextBtnClicked){
         printLastTime();
+        isNextBtnClicked = false;
         display.innerHTML = `0:00`;
     } else if (!isNextBtnClicked){
         display.classList.add('score')
@@ -133,7 +143,49 @@ function scoreListDisplay(){
     console.log(scoreList[0])   
 }
 
-// Save
+// Save in Firestore
+
+// function save(){
+//     let scores = document.querySelectorAll('.score')
+//     let scoreArray = Array.from(scores)
+//     let scoreList = scoreArray.map((score) => {
+//         return scoreInnerHTML = score.innerHTML
+//     })
+
+//     const arrayName = prompt('Type scorelist name')
+//     const testScoreValue1 = scoreList[0];
+//     const testScoreValue2 = scoreList[1];
+//     // console.log(testScoreValue)
+//     scoreList.forEach((score) => {
+
+//     })
+//     const testArray = {
+//         arrayName,
+//         testScoreValue1,
+//         testScoreValue2
+//     }
+//     firebase.firestore().collection('scores').add(testArray)
+// }
+
+// saveBtn.addEventListener('click', save)
+
+
+
+// Save in Local Storage
+
+function renderScores(){
+    const lastScoresTitle = document.createElement('h2')
+    lastScoresTitle.className = 'text-xl font-bold font-sans text-indigo-600'
+    lastScoresTitle.innerHTML = scoreListNameFromLS;
+    scoresContainer.appendChild(lastScoresTitle)
+
+    scoreListFromLS.forEach((score, index) => {
+        const lastScoresRecord = document.createElement('h2')
+        lastScoresRecord.className = 'text-xl font-bold font-sans text-indigo-600'
+        lastScoresRecord.innerHTML = scoreListFromLS[index];
+        scoresContainer.appendChild(lastScoresRecord)
+})
+}
 
 function save(){
     let scores = document.querySelectorAll('.score')
@@ -141,17 +193,22 @@ function save(){
     let scoreList = scoreArray.map((score) => {
         return scoreInnerHTML = score.innerHTML
     })
+    const arrayName = prompt('Type scorelist name');
+    localStorage.setItem('scoreListFromLS', scoreList);
+    localStorage.setItem('scoreListNameFromLS', arrayName);
+    // renderScores();
+    const scoresTitle = document.createElement('h2')
+    scoresTitle.className = 'text-xl font-bold font-sans text-indigo-600'
+    scoresTitle.innerHTML = arrayName;
+    scoresContainer.appendChild(scoresTitle)
 
-    const arrayName = prompt('Type scorelist name')
-    const testScoreValue = scoreList[0];
-    console.log(testScoreValue)
-    const testScore = {
-        arrayName,
-        testScoreValue
-    }
-    firebase.firestore().collection('scores').add(testScore)
+    scoreList.forEach((score, index) => {
+        const scoresRecord = document.createElement('h2')
+        scoresRecord.className = 'text-xl font-bold font-sans text-indigo-600'
+        scoresRecord.innerHTML = scoreList[index];
+        scoresContainer.appendChild(scoresRecord)
+    })  
 }
-
 saveBtn.addEventListener('click', save)
 
 // Formatters and other
