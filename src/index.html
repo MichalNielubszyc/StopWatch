@@ -9,6 +9,11 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+    <script src="./firebase.config.js"></script>
+
   </head>
   <body class="bg-purple-300">
     <main
@@ -16,9 +21,11 @@
       style="background-color: #3cdfea"
     >
       <h1 class="text-3xl font-bold font-sans text-indigo-600">Stopwatch</h1>
-    <div class="display-container">
-      <h2 class="display text-xl mt-8 font-bold font-sans text-indigo-600">0:00</h2>
-    </div>
+      <div class="display-container">
+        <h2 class="display text-xl mt-8 font-bold font-sans text-indigo-600">
+          0:00
+        </h2>
+      </div>
       <div class="flex mt-12">
         <button
           class="startBtn bg-pink-800 hover:bg-pink-00 px-4 py-2 rounded mr-4 text-xl font-sans font-bold text-yellow-200"
@@ -35,13 +42,13 @@
         >
           Next
         </button>
-        
+
         <button
           class="pauseBtn bg-pink-800 hover:bg-pink-00 px-4 py-2 rounded mr-4 text-xl font-sans font-bold text-yellow-200"
         >
           Pause
         </button>
-        
+
         <button
           class="resetBtn bg-pink-800 hover:bg-pink-00 px-4 py-2 rounded mr-4 text-xl font-sans font-bold text-yellow-200"
         >

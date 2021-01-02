@@ -1,3 +1,6 @@
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
 // Stopwatch Buttons & display
 
 const startBtn = document.querySelector('.startBtn');
@@ -126,8 +129,30 @@ function scoreListDisplay(){
     let scoreList = scoreArray.map((score) => {
         return scoreInnerHTML = score.innerHTML
     })
-    console.table(scoreList)    
+    console.table(scoreList) 
+    console.log(scoreList[0])   
 }
+
+// Save
+
+function save(){
+    let scores = document.querySelectorAll('.score')
+    let scoreArray = Array.from(scores)
+    let scoreList = scoreArray.map((score) => {
+        return scoreInnerHTML = score.innerHTML
+    })
+
+    const arrayName = prompt('Type scorelist name')
+    const testScoreValue = scoreList[0];
+    console.log(testScoreValue)
+    const testScore = {
+        arrayName,
+        testScoreValue
+    }
+    firebase.firestore().collection('scores').add(testScore)
+}
+
+saveBtn.addEventListener('click', save)
 
 // Formatters and other
 
