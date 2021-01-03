@@ -130,15 +130,15 @@ resetBtn.addEventListener('click', reset)
 
 // Next function
 
-const displayContainer = document.querySelector('.display-container');
+const currentScoresSection = document.querySelector('.current-scores-section');
+const currentScoresHeader = document.querySelector('.current-scores-header');
 let isNextBtnClicked = false;
 
 function nextStart(){
+    currentScoresHeader.innerHTML = 'Current scores:'
     printLastTime()
     isNextBtnClicked = true;
 }
-
-let listPosition = 1;
 
 function printLastTime(){
     elapsedTime = Date.now() - startTime; // in ms
@@ -146,14 +146,13 @@ function printLastTime(){
     let elapsedLastTimeSeconds = elapsedTimeSeconds;
     let elapsedLastTimeRemainder = elapsedTimeRemainder;
     const displayLast = document.createElement('h2');
-    displayLast.className = `displayLast${listPosition} score text-xl mt-8 font-bold font-sans text-indigo-600 small-margins`
+    displayLast.className = `displayLast score text-xl mt-8 font-bold font-sans text-indigo-600 small-margins`
     if(elapsedLastTimeRemainder<10){
         displayLast.innerHTML = `${elapsedLastTimeSeconds}:0${elapsedLastTimeRemainder}`;
     }else{
         displayLast.innerHTML = `${elapsedLastTimeSeconds}:${elapsedLastTimeRemainder}`;
     }
-    displayContainer.appendChild(displayLast)
-    listPosition = listPosition +1;
+    currentScoresSection.appendChild(displayLast)
 }
 
 nextBtn.addEventListener('click', nextStart)
