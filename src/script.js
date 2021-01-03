@@ -11,12 +11,7 @@ const resetBtn = document.querySelector('.resetBtn');
 const saveBtn = document.querySelector('.saveBtn');
 const display = document.querySelector('.display');
 
-//XXXXXXXXXXXXXXXXXX Rendering previous scores from local storage
-// const scoreListNameFromLS = localStorage.getItem('scoreListNameFromLS');
-// const scoreListFromLSString = localStorage.getItem('scoreListFromLS');
-// const scoreListFromLS = scoreListFromLSString.split(",")
-
-// Rendering last scores from Firestore
+// Rendering last scores from Firestore + accordion
 const scoresContainer = document.querySelector('.scores-section')
 
 firebase.firestore().collection('scoresCollection').onSnapshot((scoresDocuments) => renderScores(scoresDocuments));
@@ -34,9 +29,9 @@ function renderScores(documents) {
 	documents.forEach((document) => {
 		const id = document.id;
         const data = document.data();
-        html += `<li>
-        <p class="text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
-        <p class="text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
+        html += `<li class="flex-container">
+        <p class="tab text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
+        <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
         <br>
         </li>`
     });
@@ -45,6 +40,12 @@ function renderScores(documents) {
     scoresContainer.appendChild(list)
     listExists = true;
 
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            tab.nextElementSibling.classList.toggle('hidden')
+        })
+    })
 }
 
 // Start function
@@ -87,7 +88,6 @@ function pause(){
     } else {
         start();
     }
-    
 }
 pauseBtn.addEventListener('click', pause)
 
@@ -186,46 +186,6 @@ function save(){
 }
 
 saveBtn.addEventListener('click', save)
-
-// Save in Local Storage
-
-// function renderScores(){
-//     const lastScoresTitle = document.createElement('h2')
-//     lastScoresTitle.className = 'text-xl font-bold font-sans text-indigo-600'
-//     lastScoresTitle.innerHTML = scoreListNameFromLS;
-//     scoresContainer.appendChild(lastScoresTitle)
-
-//     scoreListFromLS.forEach((score, index) => {
-//         const lastScoresRecord = document.createElement('h2')
-//         lastScoresRecord.className = 'text-xl font-bold font-sans text-indigo-600'
-//         lastScoresRecord.innerHTML = scoreListFromLS[index];
-//         scoresContainer.appendChild(lastScoresRecord)
-// })
-// }
-
-// function save(){
-//     let scores = document.querySelectorAll('.score')
-//     let scoreArray = Array.from(scores)
-//     let scoreList = scoreArray.map((score) => {
-//         return scoreInnerHTML = score.innerHTML
-//     })
-//     const arrayName = prompt('Type scorelist name');
-//     localStorage.setItem('scoreListFromLS', scoreList);
-//     localStorage.setItem('scoreListNameFromLS', arrayName);
-//     // renderScores();
-//     const scoresTitle = document.createElement('h2')
-//     scoresTitle.className = 'text-xl font-bold font-sans text-indigo-600'
-//     scoresTitle.innerHTML = arrayName;
-//     scoresContainer.appendChild(scoresTitle)
-
-//     scoreList.forEach((score, index) => {
-//         const scoresRecord = document.createElement('h2')
-//         scoresRecord.className = 'text-xl font-bold font-sans text-indigo-600'
-//         scoresRecord.innerHTML = scoreList[index];
-//         scoresContainer.appendChild(scoresRecord)
-//     })  
-// }
-// saveBtn.addEventListener('click', save)
 
 // Formatters and other
 
