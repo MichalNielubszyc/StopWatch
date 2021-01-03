@@ -176,13 +176,19 @@ function save(){
     let scoreList = scoreArray.map((score) => {
         return scoreInnerHTML = score.innerHTML
     })
+    
     const arrayName = prompt('Type scorelist name')
+
+    if (!arrayName){
+        return
+    }
 
     const testArray = {
         name : arrayName,
         scores : scoreList
     }
     firebase.firestore().collection('scoresCollection').add(testArray)
+    reset()
 }
 
 saveBtn.addEventListener('click', save)
