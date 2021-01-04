@@ -197,6 +197,7 @@ function save(){
     
     const arrayName = prompt('Type scorelist name')
     if (!arrayName){
+        alert('Save failed! You need to type a scorelist name!')
         return
     }
     const testArray = {
