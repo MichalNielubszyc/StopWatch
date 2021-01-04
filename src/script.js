@@ -1,17 +1,7 @@
-// Initialize Firebase
+// Initialize Firebase & Rendering last scores from Firestore + accordion
+
 firebase.initializeApp(firebaseConfig);
 
-// Stopwatch Buttons & display
-
-const startBtn = document.querySelector('.startBtn');
-const stopBtn = document.querySelector('.stopBtn');
-const nextBtn = document.querySelector('.nextBtn');
-const pauseBtn = document.querySelector('.pauseBtn');
-const resetBtn = document.querySelector('.resetBtn');
-const saveBtn = document.querySelector('.saveBtn');
-const display = document.querySelector('.display');
-
-// Rendering last scores from Firestore + accordion
 const scoresContainer = document.querySelector('.scores-section')
 
 firebase.firestore().collection('scoresCollection').onSnapshot((scoresDocuments) => renderScores(scoresDocuments));
@@ -48,6 +38,48 @@ function renderScores(documents) {
     })
 }
 
+// Stopwatch Buttons & display
+
+const startBtn = document.querySelector('.startBtn');
+const stopBtn = document.querySelector('.stopBtn');
+const nextBtn = document.querySelector('.nextBtn');
+const pauseBtn = document.querySelector('.pauseBtn');
+const resetBtn = document.querySelector('.resetBtn');
+const saveBtn = document.querySelector('.saveBtn');
+const display = document.querySelector('.display');
+
+// State management & hiding/showing buttons
+
+let state = '';
+
+function updateState(x){
+    state = x;
+    if (state === 'initial'){
+        hide([stopBtn, nextBtn, pauseBtn, resetBtn, saveBtn]);
+        show([startBtn])   
+    }else if (state === 'started'){
+        hide([startBtn]);
+        show([stopBtn, nextBtn, pauseBtn, resetBtn])    
+    } else if (state === 'stopped'){
+        hide([startBtn, stopBtn, nextBtn, pauseBtn])
+        show([resetBtn, saveBtn])    
+    } else if (state === 'paused'){
+        hide([stopBtn, nextBtn, saveBtn])
+        show([startBtn])
+    }
+}
+
+function hide(buttons){
+    buttons.forEach((btn) => {
+        btn.classList.add('hidden')
+    })
+}
+function show(buttons){
+    buttons.forEach((btn) => {
+        btn.classList.remove('hidden')
+    })
+}
+
 // Start function
 
 let startTime;
@@ -55,16 +87,12 @@ let elapsedTime = 0;
 let stopWatchInterval;
 
 function start(){
-    if (isStopBtnClicked){
-        startTime = Date.now();
-        isStopBtnClicked = false;
-    } else if (!isStopBtnClicked) {
-        startTime = Date.now() - elapsedTime;
+    if (state = 'paused') {
+        pauseBtn.innerHTML = 'Pause'
     }
+    startTime = Date.now() - elapsedTime;
+    updateState('started')
     stopWatchInterval = setInterval(printTime, 10);
-    changeStartStopBtn();
-    pauseBtn.classList.remove('clicked');
-    saveBtn.classList.add('button--hidden');
 }
 startBtn.addEventListener('click', start)
 
@@ -81,32 +109,26 @@ function printTime(){
 // Pause function
 
 function pause(){
-    if (!pauseBtn.classList.contains('clicked')){
-        clearInterval(stopWatchInterval);
-        changeStartStopBtn();
-        pauseBtn.classList.add('clicked')
-    } else {
+    if (state === 'started' || state === 'next'){
+        updateState('paused');
+        clearInterval(stopWatchInterval)
+        console.log(state)
+        pauseBtn.innerHTML = 'Resume'
+    } else if ( state === 'paused') {
         start();
+        pauseBtn.innerHTML = 'Pause'
+        console.log(state)
     }
 }
 pauseBtn.addEventListener('click', pause)
 
 // Stop function
 
-let isStopBtnClicked = false;
-
 function stop(){
     clearInterval(stopWatchInterval);
-    changeStartStopBtn();
-    isStopBtnClicked = true;
-    saveBtn.classList.remove('button--hidden');
-    if (isNextBtnClicked){
-        printLastTime();
-        isNextBtnClicked = false;
-        display.innerHTML = `0:00`;
-    } else if (!isNextBtnClicked){
-        display.classList.add('score')
-    }
+    printLastTime();
+    display.innerHTML = `0:00`;
+    updateState('stopped');
     scoreListDisplay();
 }
 stopBtn.addEventListener('click', stop)
@@ -115,16 +137,15 @@ stopBtn.addEventListener('click', stop)
 
 function reset(){
     display.innerHTML = `0:00`
+    currentScoresHeader.innerHTML = ''
     elapsedTime = 0;
     clearInterval(stopWatchInterval);
-    if (startBtn.classList.contains('button--hidden')){
-        changeStartStopBtn();
-    }
     let scores = document.querySelectorAll('.score');
     scores.forEach((score) => {
         score.remove()
     })
-    }
+    updateState('initial')
+}
 
 resetBtn.addEventListener('click', reset)
 
@@ -132,12 +153,11 @@ resetBtn.addEventListener('click', reset)
 
 const currentScoresSection = document.querySelector('.current-scores-section');
 const currentScoresHeader = document.querySelector('.current-scores-header');
-let isNextBtnClicked = false;
 
 function nextStart(){
+    state = 'next';
     currentScoresHeader.innerHTML = 'Current scores:'
     printLastTime()
-    isNextBtnClicked = true;
 }
 
 function printLastTime(){
@@ -154,7 +174,6 @@ function printLastTime(){
     }
     currentScoresSection.appendChild(displayLast)
 }
-
 nextBtn.addEventListener('click', nextStart)
 
 // Score list
@@ -177,11 +196,9 @@ function save(){
     })
     
     const arrayName = prompt('Type scorelist name')
-
     if (!arrayName){
         return
     }
-
     const testArray = {
         name : arrayName,
         scores : scoreList
@@ -189,7 +206,6 @@ function save(){
     firebase.firestore().collection('scoresCollection').add(testArray)
     reset()
 }
-
 saveBtn.addEventListener('click', save)
 
 // Formatters and other
@@ -198,14 +214,4 @@ function formatTime(){
     elapsedTime = elapsedTime.toFixed(0);
     elapsedTimeSeconds = Math.floor(elapsedTime/1000) // in s
     elapsedTimeRemainder = Math.floor((elapsedTime % 1000)/10) ; // in 0.01 s
-}
-
-function changeStartStopBtn(){
-    if (startBtn.classList.contains('button--hidden')){
-        startBtn.classList.remove('button--hidden')
-        stopBtn.classList.add('button--hidden')
-    } else {
-        startBtn.classList.add('button--hidden')
-        stopBtn.classList.remove('button--hidden')
-    }
 }
