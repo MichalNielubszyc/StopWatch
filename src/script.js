@@ -1,110 +1,88 @@
+// FIREBASE OPTION - uncomment to use / commment to use localStorage
 // Initialize Firebase and reading previous scores form Firestore
 
 // firebase.initializeApp(firebaseConfig);
-
-const scoresContainer = document.querySelector('.scores-section')
-
 // firebase.firestore().collection('scoresCollection').onSnapshot((scoresDocuments) => renderScores(scoresDocuments));
-
-// Reading previous scores form localStorage
-
-const currentData = (JSON.parse(localStorage.getItem('MY_DATA'))) || {} 
-
-console.log(currentData)
-console.log(Object.keys(currentData)[0]) // Scorelist name
-console.log(Object.values(currentData)[0]) // Scores
-
-console.log(Array.from(currentData))
+// const scoresContainer = document.querySelector('.scores-section')
 
 // Rendering last scores from Firestore + accordion
 
 // let listExists = false
 
 // function renderScores(documents) {
-//     if (listExists){
-//         const previousList = document.querySelector('ul')
-//         previousList.remove()
-//     }
-//     const list = document.createElement('ul');
-//     let html = '';
+    //     if (listExists){
+        //         const previousList = document.querySelector('ul')
+        //         previousList.remove()
+        //     }
+        //     const list = document.createElement('ul');
+        //     let html = '';
+        
+        // 	documents.forEach((document) => {
+            // 		const id = document.id;
+            //         const data = document.data();
+            //         html += `<li class="flex-container">
+            //         <p class="tab text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
+            //         <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
+            //         <br>
+            //         </li>`
+            //     });
+            
+            //     list.innerHTML = html;
+            //     scoresContainer.appendChild(list)
+            //     listExists = true;
+            
+            //     const tabs = document.querySelectorAll('.tab');
+            //     tabs.forEach((tab) => {
+                //         tab.addEventListener('click', () => {
+                    //             tab.nextElementSibling.classList.toggle('hidden')
+                    //         })
+                    //     })
+                    // }
 
-// 	documents.forEach((document) => {
-// 		const id = document.id;
-//         const data = document.data();
-//         html += `<li class="flex-container">
-//         <p class="tab text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
-//         <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
-//         <br>
-//         </li>`
-//     });
-    
-//     list.innerHTML = html;
-//     scoresContainer.appendChild(list)
-//     listExists = true;
-
-//     const tabs = document.querySelectorAll('.tab');
-//     tabs.forEach((tab) => {
-//         tab.addEventListener('click', () => {
-//             tab.nextElementSibling.classList.toggle('hidden')
-//         })
-//     })
-// }
+// LOCAL STORAGE - UNCOMMENT TO USE Reading previous scores form localStorage
+                    
+const currentData = (JSON.parse(localStorage.getItem('MY_DATA'))) || {} 
+const scoresContainer = document.querySelector('.scores-section')                    
+let listExists = false
+const currentDataArray = Object.entries(currentData)
 
 // Rendering last scores from localStorage + accordion
 
-// console.log(Object.keys(currentData)[0])
-// console.log(Object.values(currentData)[0])
+function renderScores(arrays) {
+    if (listExists){
+        const previousList = document.querySelector('ul')
+        previousList.remove()
+    }
+    const list = document.createElement('ul');
+    let html = '';
 
-// let listExists = false
-
-// function renderScores(documents) {
-//     if (listExists){
-//         const previousList = document.querySelector('ul')
-//         previousList.remove()
-//     }
-//     const list = document.createElement('ul');
-//     let html = '';
-
-// 	documents.forEach((document) => {
-// 		const id = document.id;
-//         const data = document.data();
-//         html += `<li class="flex-container">
-//         <p class="tab text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
-//         <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
-//         <br>
-//         </li>`
-//     });
+    arrays.forEach((array) => {
+        const title = array[0];
+        const scoresFromLS = array[1];
+        html += `<li class="flex-container">
+        <p class="tab text-xl font-bold font-sans text-indigo-600">${title}:</p>
+        <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${scoresFromLS}</p>
+        <br>
+        </li>`
+    });
     
-//     list.innerHTML = html;
-//     scoresContainer.appendChild(list)
-//     listExists = true;
+    list.innerHTML = html;
+    scoresContainer.appendChild(list)
+    listExists = true;
+    createAccordion()
+}
 
-//     const tabs = document.querySelectorAll('.tab');
-//     tabs.forEach((tab) => {
-//         tab.addEventListener('click', () => {
-//             tab.nextElementSibling.classList.toggle('hidden')
-//         })
-//     })
-// }
+renderScores(currentDataArray);
 
-// renderScores(currentData);
-
-// Rendering previous scores from local storage
-
-// function renderScores(){
-    //     const lastScoresTitle = document.createElement('h2')
-    //     lastScoresTitle.className = 'text-xl font-bold font-sans text-indigo-600'
-    //     lastScoresTitle.innerHTML = scoreListNameFromLS;
-    //     scoresContainer.appendChild(lastScoresTitle)
-    
-    //     scoreListFromLS.forEach((score, index) => {
-        //         const lastScoresRecord = document.createElement('h2')
-        //         lastScoresRecord.className = 'text-xl font-bold font-sans text-indigo-600'
-        //         lastScoresRecord.innerHTML = scoreListFromLS[index];
-        //         scoresContainer.appendChild(lastScoresRecord)
-        // })
-        // }
-        
+function createAccordion() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            tab.nextElementSibling.classList.toggle('hidden')
+        })
+    })
+}
+      
 // Stopwatch Buttons & display
 
 const startBtn = document.querySelector('.startBtn');
@@ -213,7 +191,6 @@ function reset(){
     })
     updateState('initial')
 }
-
 resetBtn.addEventListener('click', reset)
 
 // Next function
@@ -267,42 +244,57 @@ function save(){
         alert('Save failed! You need to type a scorelist name!')
         return
     }
-    // const testArray = {
-    //     name : arrayName,
-    //     scores : scoreList
-    // }
-    // firebase.firestore().collection('scoresCollection').add(testArray)
+    
+    // FIREBASE OPTION - uncomment to use / commment to use localStorage
+    // saveInFirebase();
 
-    localStorage.setItem('MY_DATA', JSON.stringify({...currentData, [arrayName]: scoreList}))
+    // LOCALSTORAGE OPTION - uncomment to use / commment to use Firestore
+    saveInLocalStorage();
+
     reset()
 }
 saveBtn.addEventListener('click', save)
 
-//XXXXXXXXXXXXXXXXXXXXXXX Save in Local Storage
-
-// function save(){
-//     let scores = document.querySelectorAll('.score')
-//     let scoreArray = Array.from(scores)
-//     let scoreList = scoreArray.map((score) => {
-//         return scoreInnerHTML = score.innerHTML
-//     })
-//     const arrayName = prompt('Type scorelist name');
-//     localStorage.setItem('scoreListFromLS', scoreList);
-//     localStorage.setItem('scoreListNameFromLS', arrayName);
-//     // renderScores();
-//     const scoresTitle = document.createElement('h2')
-//     scoresTitle.className = 'text-xl font-bold font-sans text-indigo-600'
-//     scoresTitle.innerHTML = arrayName;
-//     scoresContainer.appendChild(scoresTitle)
-
-//     scoreList.forEach((score, index) => {
-//         const scoresRecord = document.createElement('h2')
-//         scoresRecord.className = 'text-xl font-bold font-sans text-indigo-600'
-//         scoresRecord.innerHTML = scoreList[index];
-//         scoresContainer.appendChild(scoresRecord)
-//     })  
+// FIRESTORE OPTION - uncomment to use / commment to use Firestore
+// function saveInFirebase(){
+//     const testArray = {
+//         name : arrayName,
+//         scores : scoreList
+//     }
+//     firebase.firestore().collection('scoresCollection').add(testArray)
 // }
-// saveBtn.addEventListener('click', save)
+
+// LOCALSTORAGE OPTION - uncomment to use / commment to use Firestore
+function saveInLocalStorage(){
+    localStorage.setItem('MY_DATA', JSON.stringify({...currentData, [arrayName]: scoreList}))
+    
+    if (listExists){
+        list = document.querySelector('ul');
+    } else {
+        const list = document.createElement('ul');
+    }
+
+    const li = document.createElement('li');
+    li.classList.add('flex-container');
+    li.innerHTML = `
+    <p class="current-tab tab text-xl font-bold font-sans text-indigo-600">${arrayName}:</p>
+    <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${scoreList}</p>
+    <br>
+    `
+    list.appendChild(li)
+    listExists = true;
+
+    createCurrentAccordion()
+}
+
+function createCurrentAccordion() {
+    const currentTabs = document.querySelectorAll('.current-tab');
+    currentTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            tab.nextElementSibling.classList.toggle('hidden')
+        })
+    })
+}
 
 // Formatters and other
 
