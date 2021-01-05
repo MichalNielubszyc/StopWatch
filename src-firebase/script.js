@@ -1,88 +1,43 @@
-// FIREBASE OPTION - uncomment to use / commment to use localStorage
 // Initialize Firebase and reading previous scores form Firestore
 
-// firebase.initializeApp(firebaseConfig);
-// firebase.firestore().collection('scoresCollection').onSnapshot((scoresDocuments) => renderScores(scoresDocuments));
-// const scoresContainer = document.querySelector('.scores-section')
+firebase.initializeApp(firebaseConfig);
+firebase.firestore().collection('scoresCollection').onSnapshot((scoresDocuments) => renderScores(scoresDocuments));
+const scoresContainer = document.querySelector('.scores-section')
 
 // Rendering last scores from Firestore + accordion
 
-// let listExists = false
-
-// function renderScores(documents) {
-    //     if (listExists){
-        //         const previousList = document.querySelector('ul')
-        //         previousList.remove()
-        //     }
-        //     const list = document.createElement('ul');
-        //     let html = '';
-        
-        // 	documents.forEach((document) => {
-            // 		const id = document.id;
-            //         const data = document.data();
-            //         html += `<li class="flex-container">
-            //         <p class="tab text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
-            //         <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
-            //         <br>
-            //         </li>`
-            //     });
-            
-            //     list.innerHTML = html;
-            //     scoresContainer.appendChild(list)
-            //     listExists = true;
-            
-            //     const tabs = document.querySelectorAll('.tab');
-            //     tabs.forEach((tab) => {
-                //         tab.addEventListener('click', () => {
-                    //             tab.nextElementSibling.classList.toggle('hidden')
-                    //         })
-                    //     })
-                    // }
-
-// LOCAL STORAGE - UNCOMMENT TO USE Reading previous scores form localStorage
-                    
-const currentData = (JSON.parse(localStorage.getItem('MY_DATA'))) || {} 
-const scoresContainer = document.querySelector('.scores-section')                    
 let listExists = false
-const currentDataArray = Object.entries(currentData)
 
-// Rendering last scores from localStorage + accordion
+function renderScores(documents) {
+        if (listExists){
+                const previousList = document.querySelector('ul')
+                previousList.remove()
+            }
+            const list = document.createElement('ul');
+            let html = '';
+        
+        	documents.forEach((document) => {
+            		const id = document.id;
+                    const data = document.data();
+                    html += `<li class="flex-container">
+                    <p class="tab text-xl font-bold font-sans text-indigo-600">${data.name}:</p>
+                    <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${data.scores}</p>
+                    <br>
+                    </li>`
+                });
+            
+                list.innerHTML = html;
+                scoresContainer.appendChild(list)
+                listExists = true;
+            
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach((tab) => {
+                        tab.addEventListener('click', () => {
+                                tab.nextElementSibling.classList.toggle('hidden')
+                            })
+                        })
+                    }
 
-function renderScores(arrays) {
-    if (listExists){
-        const previousList = document.querySelector('ul')
-        previousList.remove()
-    }
-    const list = document.createElement('ul');
-    let html = '';
-
-    arrays.forEach((array) => {
-        const title = array[0];
-        const scoresFromLS = array[1];
-        html += `<li class="flex-container">
-        <p class="tab text-xl font-bold font-sans text-indigo-600">${title}:</p>
-        <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${scoresFromLS}</p>
-        <br>
-        </li>`
-    });
-    
-    list.innerHTML = html;
-    scoresContainer.appendChild(list)
-    listExists = true;
-    createAccordion()
-}
-
-renderScores(currentDataArray);
-
-function createAccordion() {
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            tab.nextElementSibling.classList.toggle('hidden')
-        })
-    })
-}
-      
 // Stopwatch Buttons & display
 
 const startBtn = document.querySelector('.startBtn');
@@ -157,12 +112,10 @@ function pause(){
     if (state === 'started' || state === 'next'){
         updateState('paused');
         clearInterval(stopWatchInterval)
-        console.log(state)
         pauseBtn.innerHTML = 'Resume'
     } else if ( state === 'paused') {
         start();
         pauseBtn.innerHTML = 'Pause'
-        console.log(state)
     }
 }
 pauseBtn.addEventListener('click', pause)
@@ -230,9 +183,9 @@ function scoreListDisplay(){
     })
 }
 
-// Save in Firestore/localStorage
+// Saving in Firestore
 
-function save(){
+function saveInFirebase(){
     let scoreNodeList = document.querySelectorAll('.score')
     let scoreArray = Array.from(scoreNodeList)
     let scoreList = scoreArray.map((score) => {
@@ -244,57 +197,14 @@ function save(){
         alert('Save failed! You need to type a scorelist name!')
         return
     }
-    
-    // FIREBASE OPTION - uncomment to use / commment to use localStorage
-    // saveInFirebase();
-
-    // LOCALSTORAGE OPTION - uncomment to use / commment to use Firestore
-    saveInLocalStorage();
-
+    const testArray = {
+        name : arrayName,
+        scores : scoreList
+    }
+    firebase.firestore().collection('scoresCollection').add(testArray)
     reset()
 }
-saveBtn.addEventListener('click', save)
-
-// FIRESTORE OPTION - uncomment to use / commment to use Firestore
-// function saveInFirebase(){
-//     const testArray = {
-//         name : arrayName,
-//         scores : scoreList
-//     }
-//     firebase.firestore().collection('scoresCollection').add(testArray)
-// }
-
-// LOCALSTORAGE OPTION - uncomment to use / commment to use Firestore
-function saveInLocalStorage(){
-    localStorage.setItem('MY_DATA', JSON.stringify({...currentData, [arrayName]: scoreList}))
-    
-    if (listExists){
-        list = document.querySelector('ul');
-    } else {
-        const list = document.createElement('ul');
-    }
-
-    const li = document.createElement('li');
-    li.classList.add('flex-container');
-    li.innerHTML = `
-    <p class="current-tab tab text-xl font-bold font-sans text-indigo-600">${arrayName}:</p>
-    <p class="tab-slide hidden text-xl font-bold font-sans text-indigo-600">${scoreList}</p>
-    <br>
-    `
-    list.appendChild(li)
-    listExists = true;
-
-    createCurrentAccordion()
-}
-
-function createCurrentAccordion() {
-    const currentTabs = document.querySelectorAll('.current-tab');
-    currentTabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            tab.nextElementSibling.classList.toggle('hidden')
-        })
-    })
-}
+saveBtn.addEventListener('click', saveInFirebase)
 
 // Formatters and other
 
