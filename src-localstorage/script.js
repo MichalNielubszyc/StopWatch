@@ -1,11 +1,9 @@
 // Reading previous scores form localStorage
                     
-const currentData = (JSON.parse(localStorage.getItem('MY_DATA'))) || {} 
+let dataFromLocalStorage = (JSON.parse(localStorage.getItem('STOPWATCH_DATA'))) || {} 
 const scoresContainer = document.querySelector('.scores-section')                    
 let listExists = false;
-const currentDataArray = Object.entries(currentData)
-
-console.log(currentDataArray)
+const currentDataArray = Object.entries(dataFromLocalStorage)
 
 // Rendering last scores from localStorage + accordion
 
@@ -203,9 +201,10 @@ function saveInLocalStorage(){
         alert('Save failed! You need to type a scorelist name!')
         return
     }
-    
-    localStorage.setItem('MY_DATA', JSON.stringify({...currentData, [arrayName]: scoreList}))
-    
+
+    dataFromLocalStorage = JSON.parse(localStorage.getItem('STOPWATCH_DATA')) 
+    console.log(dataFromLocalStorage)
+    localStorage.setItem('STOPWATCH_DATA', JSON.stringify({...dataFromLocalStorage, [arrayName]: scoreList}))
     if (listExists){
         list = document.querySelector('ul');
     } else {
@@ -222,18 +221,19 @@ function saveInLocalStorage(){
     list.appendChild(li)
     listExists = true;
 
-    createCurrentAccordion();
+    const currentTabs = document.querySelectorAll('.current-tab');
+    const lastTab = currentTabs[currentTabs.length - 1];
+    
+    createCurrentAccordion(lastTab);
 
     reset();
 }
 saveBtn.addEventListener('click', saveInLocalStorage)
 
-function createCurrentAccordion() {
-    const currentTabs = document.querySelectorAll('.current-tab');
-    currentTabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            tab.nextElementSibling.classList.toggle('hidden')
-        })
+function createCurrentAccordion(item) {
+
+    item.addEventListener('click', () => {
+        item.nextElementSibling.classList.toggle('hidden');
     })
 }
 
